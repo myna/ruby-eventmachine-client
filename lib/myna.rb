@@ -24,7 +24,9 @@
 
 require 'eventmachine'
 require 'em-http-request'
+require 'json'
 require 'thread'
+
 
 module Myna
   
@@ -48,7 +50,7 @@ module Myna
     include Singleton
 
     def suggest(uuid) 
-      '/v1/suggest/'+uuid
+      '/v1/experiment/'+uuid+'/suggest'
     end
   end
 
@@ -88,8 +90,10 @@ module Myna
     end
 
     def suggest()
-      client = EventMachine::HttpRequest.new("http://#{@host}:#{@port}#{@path.suggest(@uuid)}")
-      http = client.get(:head => {'Accept' => 'application/json'})
+      path = "http://#{@host}:#{@port}#{@path.suggest(@uuid)}"
+      puts "Contacting "+path
+      client = EventMachine::HttpRequest.new(path)
+      http = client.get(:head  => {'Accept' => 'application/json'})
       future = Future.new
       
       http.errback { future.deliver("badness") }

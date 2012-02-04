@@ -28,7 +28,7 @@ require 'myna'
 class MynaClientTest < MiniTest::Unit::TestCase
 
   HOST = "127.0.0.1"
-  PORT = 8888
+  PORT = 8080
 
   def setup
     Myna.run
@@ -40,7 +40,7 @@ class MynaClientTest < MiniTest::Unit::TestCase
   end
 
   def test_suggest
-    expt = Myna::Experiment.new('kF3xKMRVlQJreTBm1dgGPCLyvs', HOST, PORT)
+    expt = Myna::Experiment.new('45923780-80ed-47c6-aa46-15e2ae7a0e8c', HOST, PORT)
     puts expt.suggest.get
 
     assert(false, "Not implemented")
