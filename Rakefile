@@ -9,7 +9,7 @@ gemspec = Gem::Specification.new do |s|
   s.homepage          = 'http://www.mynaweb.com/'
   s.rubyforge_project = 'myna'
   s.summary           = 'Ruby/EventMachine client library for Myna (http://www.mynaweb.com)'
-  s.description       = File.read(File.expand_path(File.join(File.dirname(__FILE__), 'README')))
+  s.description       = File.read(File.expand_path(File.join(File.dirname(__FILE__), 'README.md')))
 
   s.add_dependency('json')
 

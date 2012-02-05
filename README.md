@@ -2,6 +2,7 @@
 
 This is a Ruby client for the v1 Myna API, using EventMachine for asychronous goodness.
 
+Tested in Ruby 1.9.2
 
 ## Development Notes
 

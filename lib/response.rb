@@ -1,16 +1,17 @@
 require 'json'
+require 'singleton'
 
 module Response
   # String -> Response
   #
   # Parse a JSON string into a Response object
-  def parse(str) 
+  def Response.parse(str) 
     json = JSON.parse str
     case json['typename']
     when 'mynaapierror'
       ApiError.from_json(json)
     when 'ok'
-      Ok
+      Ok.instance
     when 'suggestion'
       Suggestion.from_json(json)
     when 'uuid'
@@ -45,7 +46,8 @@ module Response
   end
 
   # Singleton
-  module Ok < Response
+  class Ok < Response
+    include Singleton
   end
 
   class Suggestion < Response
