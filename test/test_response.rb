@@ -28,6 +28,21 @@ require 'response'
 describe Response do
 
   describe "parse" do
+    it "must parse an error" do
+      txt = '{"typename":"mynaapierror","code":1411,"message":"Experiment cannot be found"}'
+      ans = Response.parse(txt)
+
+      ans.must_be_kind_of Response::ApiError
+      ans.code.must_equal 1411
+      ans.message.must_equal "Experiment cannot be found"
+    end
+
+    it "must parse ok" do
+      ans = Response.parse('{"typename":"ok"}')
+      
+      ans.must_be_kind_of Response::Ok
+    end
+
     it "must parse a suggestion" do
       txt = '{"typename":"suggestion","token":"871ec6f8-bea7-4a51-ba48-33bdfea9feb2","choice":"variant2"}'
       ans = Response.parse(txt)
@@ -35,6 +50,35 @@ describe Response do
       ans.must_be_kind_of Response::Suggestion
       ans.token.must_equal  '871ec6f8-bea7-4a51-ba48-33bdfea9feb2'
       ans.choice.must_equal 'variant2'
+    end
+
+    it "must parse a uuid" do
+      ans = Response.parse('{"typename":"uuid","uuid":"f8d9eb79-3d8f-41b0-9044-605faddd959c"}')
+      
+      ans.must_be_kind_of Response::Uuid
+      ans.uuid.must_equal 'f8d9eb79-3d8f-41b0-9044-605faddd959c'
+    end
+
+    it "must parse an experiment" do
+      txt = '{"typename":"experiment",
+              "name":"test",
+              "uuid":"45923780-80ed-47c6-aa46-15e2ae7a0e8c",
+              "accountId":"eb1fb383-4172-422a-b680-8031cf26a23e",
+              "variants":[
+                 {"typename":"variant",
+                  "name":"variant1",
+                  "views":36,
+                  "totalReward":1.0,
+                  "confidenceBound":0.252904521564191},
+                 {"typename":"variant",
+                  "name":"variant2",
+                  "views":9672,
+                  "totalReward":0.0,
+                  "confidenceBound":0.015429423531830728}]}'
+      ans = Response.parse(txt)
+
+      ans.must_be_kind_of Response::Experiment
+      ans.must_equal "Not implemented"
     end
   end
 end

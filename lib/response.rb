@@ -18,10 +18,6 @@ module Response
       Uuid.from_json(json)
     when 'experiment'
       Experiment.from_json(json)
-    when 'user'
-      User.from_json(json)
-    when 'uuids'
-      # ...
     else
       # ...
     end
@@ -62,5 +58,20 @@ module Response
       @token = token
       @choice = choice
     end
+  end
+
+  class Uuid < Response
+    def self.from_json(json)
+      uuid = Uuid.new(json['uuid'])
+    end
+
+    attr_reader :uuid
+    
+    def initialize(uuid)
+      @uuid = uuid
+    end
+  end
+
+  class Experiment < Response
   end
 end
