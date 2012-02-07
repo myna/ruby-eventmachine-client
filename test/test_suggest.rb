@@ -25,25 +25,32 @@
 require 'minitest/autorun'
 require 'myna'
 
-class MynaClientTest < MiniTest::Unit::TestCase
+describe Myna do
+  
+  HOST = "api.mynaweb.com"
+  PORT = 80
 
-  HOST = "127.0.0.1"
-  PORT = 8080
-
-  def setup
+  before do
     Myna.run
     sleep(1) # Give EM a chance to start
   end
 
-  def teardown
+  after do
     Myna.stop
   end
 
-  def test_suggest
-    expt = Myna::Experiment.new('45923780-80ed-47c6-aa46-15e2ae7a0e8c', HOST, PORT)
-    puts expt.suggest.get
+  describe "suggest" do
+    it "must return a suggestion for a valid experiment" do
+      expt = Myna::Experiment.new('45923780-80ed-47c6-aa46-15e2ae7a0e8c', HOST, PORT)
+      ans = expt.suggest
+      ans.get.must_be_kind_of Response::Suggestion
+    end
 
-    assert(false, "Not implemented")
+    it "must return an error for an invalid experiment" do
+      expt = Myna::Experiment.new('bogus', HOST, PORT)
+      ans = expt.suggest
+      ans.get.must_be_kind_of Response::ApiError
+    end
   end
 
 end

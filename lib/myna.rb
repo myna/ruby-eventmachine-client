@@ -97,7 +97,7 @@ module Myna
       future = Future.new
       
       http.errback { future.deliver("badness") }
-      http.callback { Response.parse(future.deliver(http.response)) }
+      http.callback { future.deliver(Response.parse(http.response)) }
 
       future
     end
