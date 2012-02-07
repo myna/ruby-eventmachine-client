@@ -78,7 +78,22 @@ describe Response do
       ans = Response.parse(txt)
 
       ans.must_be_kind_of Response::Experiment
-      ans.must_equal "Not implemented"
+      ans.name.must_equal "test"
+      ans.uuid.must_equal "45923780-80ed-47c6-aa46-15e2ae7a0e8c"
+      ans.accountId.must_equal "eb1fb383-4172-422a-b680-8031cf26a23e"
+      
+      v0 = ans.variants[0]
+      v1 = ans.variants[1]
+      
+      v0.name.must_equal "variant1"
+      v0.views.must_equal 36
+      v0.totalReward.must_equal 1.0
+      v0.confidenceBound.must_equal 0.252904521564191
+
+      v1.name.must_equal "variant2"
+      v1.views.must_equal 9672
+      v1.totalReward.must_equal 0.0
+      v1.confidenceBound.must_equal 0.015429423531830728
     end
   end
 end
