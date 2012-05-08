@@ -29,17 +29,19 @@ describe Response do
 
   describe "parse" do
     it "must parse an error" do
-      txt = '{"typename":"mynaapierror","code":1411,"message":"Experiment cannot be found"}'
+      txt = '{"typename":"problem","subtype":400,"messages":{"typename":"message", "info":"Experiment cannot be found"}}'
+      msg = {"typename" => "message", "info" => "Experiment cannot be found"}
       ans = Response.parse(txt)
 
+
       ans.must_be_kind_of Response::ApiError
-      ans.code.must_equal 1411
-      ans.message.must_equal "Experiment cannot be found"
+      ans.subtype.must_equal 400
+      ans.messages.must_equal msg
     end
 
     it "must parse ok" do
       ans = Response.parse('{"typename":"ok"}')
-      
+
       ans.must_be_kind_of Response::Ok
     end
 
@@ -54,7 +56,7 @@ describe Response do
 
     it "must parse a uuid" do
       ans = Response.parse('{"typename":"uuid","uuid":"f8d9eb79-3d8f-41b0-9044-605faddd959c"}')
-      
+
       ans.must_be_kind_of Response::Uuid
       ans.uuid.must_equal 'f8d9eb79-3d8f-41b0-9044-605faddd959c'
     end
@@ -81,10 +83,10 @@ describe Response do
       ans.name.must_equal "test"
       ans.uuid.must_equal "45923780-80ed-47c6-aa46-15e2ae7a0e8c"
       ans.accountId.must_equal "eb1fb383-4172-422a-b680-8031cf26a23e"
-      
+
       v0 = ans.variants[0]
       v1 = ans.variants[1]
-      
+
       v0.name.must_equal "variant1"
       v0.views.must_equal 36
       v0.totalReward.must_equal 1.0

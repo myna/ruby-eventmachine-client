@@ -5,10 +5,10 @@ module Response
   # String -> Response
   #
   # Parse a JSON string into a Response object
-  def Response.parse(str) 
+  def Response.parse(str)
     json = JSON.parse str
     case json['typename']
-    when 'mynaapierror'
+    when 'problem'
       ApiError.from_json(json)
     when 'ok'
       Ok.instance
@@ -29,15 +29,15 @@ module Response
 
   class ApiError < Response
     def self.from_json(json)
-      error = ApiError.new(json['code'], json['message'])
+      error = ApiError.new(json['subtype'], json['messages'])
     end
 
-    attr_reader :code
-    attr_reader :message
+    attr_reader :subtype
+    attr_reader :messages
 
-    def initialize(code, message)
-      @code = code
-      @message = message
+    def initialize(subtype, messages)
+      @subtype  = subtype
+      @messages = messages
     end
   end
 
@@ -66,7 +66,7 @@ module Response
     end
 
     attr_reader :uuid
-    
+
     def initialize(uuid)
       @uuid = uuid
     end
@@ -77,7 +77,7 @@ module Response
       variants = json['variants'].map { |variant| Variant.from_json(variant) }
       experiment = Experiment.new(json['name'], json['uuid'], json['accountId'], variants)
     end
-    
+
     attr_reader :name
     attr_reader :uuid
     attr_reader :accountId
