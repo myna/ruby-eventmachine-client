@@ -55,8 +55,9 @@ module Myna
   end
 
   module API
-    HOST = 'api.mynaweb.com'
-    PORT = 80
+    SCHEME = "https"
+    HOST   = 'api.mynaweb.com'
+    PORT   = 443
   end
 
   class Path
@@ -95,15 +96,17 @@ module Myna
   end
 
   class Experiment
-    def initialize(uuid, host = API::HOST, port = API::PORT, path = Path.instance)
-      @uuid = uuid
-      @host = host
-      @port = port
-      @path = path
+    def initialize(uuid, scheme = API::SCHEME, host = API::HOST, port = API::PORT, path = Path.instance)
+      @uuid   = uuid
+      @host   = host
+      @port   = port
+      @scheme = scheme
+      @path   = path
+
     end
 
     def suggest()
-      path = "http://#{@host}:#{@port}#{@path.suggest(@uuid)}"
+      path = "#{@scheme}://#{@host}:#{@port}#{@path.suggest(@uuid)}"
       puts "Contacting "+path
       client = EventMachine::HttpRequest.new(path)
       future = Future.new
