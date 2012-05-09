@@ -29,16 +29,29 @@ require 'thread'
 
 
 module Myna
-  
-  # Run EventMachine, if it is not already running.
+
+  # Run EventMachine, if it is not already running. Returns a future.
+  # Block on the future to wait till EventMachine is up
   def Myna.run()
-    Thread.new do
-      EventMachine::run {}
+    future = Future.new
+
+    if EventMachine::reactor_running?
+      future.deliver(true)
+    else
+      Thread.new do
+        EventMachine::run {}
+      end
+
+      EventMachine::next_tick do
+        future.deliver(true)
+      end
     end
+
+    future
   end
 
   def Myna.stop()
-    EventMachine::stop
+    EventMachine::stop_event_loop
   end
 
   module API
@@ -49,7 +62,7 @@ module Myna
   class Path
     include Singleton
 
-    def suggest(uuid) 
+    def suggest(uuid)
       '/v1/experiment/'+uuid+'/suggest'
     end
   end
@@ -62,7 +75,7 @@ module Myna
       @delivered = false
     end
 
-    def deliver(value) 
+    def deliver(value)
       @value = value
       @delivered = true
       @lock.synchronize {
@@ -71,7 +84,7 @@ module Myna
     end
 
     def get
-      if(!@delivered) 
+      if(!@delivered)
         @lock.synchronize {
           @signal.wait(@lock)
           @signal.broadcast
@@ -93,9 +106,9 @@ module Myna
       path = "http://#{@host}:#{@port}#{@path.suggest(@uuid)}"
       puts "Contacting "+path
       client = EventMachine::HttpRequest.new(path)
-      http = client.get(:head  => {'Accept' => 'application/json'})
       future = Future.new
-      
+
+      http = client.get(:head  => {'Accept' => 'application/json'})
       http.errback { future.deliver("badness") }
       http.callback { future.deliver(Response.parse(http.response)) }
 

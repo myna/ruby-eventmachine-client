@@ -26,17 +26,15 @@ require 'minitest/autorun'
 require 'myna'
 
 describe Myna do
-  
+
   HOST = "api.mynaweb.com"
   PORT = 80
 
   before do
-    Myna.run
-    sleep(1) # Give EM a chance to start
+    Myna.run.get
   end
 
   after do
-    Myna.stop
   end
 
   describe "suggest" do
