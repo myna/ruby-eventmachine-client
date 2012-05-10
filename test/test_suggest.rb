@@ -48,4 +48,15 @@ describe Myna do
     end
   end
 
+  describe "reward" do
+    it "must succeed when given correct token and amount" do
+      expt = Myna::Experiment.new('45923780-80ed-47c6-aa46-15e2ae7a0e8c')
+      suggestion = expt.suggest.get
+
+      ans = expt.reward(suggestion.token, 0.5)
+      ans.get
+      ans.get.must_be_kind_of Response::Ok
+    end
+  end
+
 end

@@ -81,21 +81,21 @@ module Myna
     end
 
     def deliver(value)
-      @value = value
-      @delivered = true
       @lock.synchronize {
+        @value = value
+        @delivered = true
         @signal.broadcast
       }
     end
 
     def get
-      if(!@delivered)
-        @lock.synchronize {
+      @lock.synchronize {
+        if !@delivered
           @signal.wait(@lock)
           @signal.broadcast
-        }
-      end
-      @value
+        end
+        @value
+      }
     end
   end
 
@@ -109,18 +109,21 @@ module Myna
     end
 
     def build_uri(path)
-      "#{@scheme}://#{@host}:#{@port}#{@path.suggest(@uuid)}"
+      "#{@scheme}://#{@host}:#{@port}#{path}"
     end
 
     def make_request(path)
       uri = build_uri(path)
       puts "Contacting "+uri
-      client = EventMachine::HttpRequest.new(uri)
       future = Future.new
 
-      http = yield(client)
-      http.errback { future.deliver("badness") }
-      http.callback { future.deliver(Response.parse(http.response)) }
+      EventMachine::run do
+        client = EventMachine::HttpRequest.new(uri)
+
+        http = yield(client)
+        http.errback  { future.deliver("badness") }
+        http.callback { future.deliver(Response.parse(http.response)) }
+      end
 
       future
     end
@@ -134,7 +137,7 @@ module Myna
     def reward(token, amount = 1.0)
       make_request(@path.reward(@uuid)) do |client|
         client.post(:head => {'Accept' => 'application/json'},
-                    :body => {:token => token, :amount => amount})
+                    :body => {:token => token, :amount => amount}.to_json)
       end
     end
   end
