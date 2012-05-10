@@ -64,7 +64,11 @@ module Myna
     include Singleton
 
     def suggest(uuid)
-      '/v1/experiment/'+uuid+'/suggest'
+      "/v1/experiment/#{uuid}/suggest"
+    end
+
+    def reward(uuid)
+      "/v1/experiment/#{uuid}/reward"
     end
   end
 
@@ -102,20 +106,36 @@ module Myna
       @port   = port
       @scheme = scheme
       @path   = path
-
     end
 
-    def suggest()
-      path = "#{@scheme}://#{@host}:#{@port}#{@path.suggest(@uuid)}"
-      puts "Contacting "+path
-      client = EventMachine::HttpRequest.new(path)
+    def build_uri(path)
+      "#{@scheme}://#{@host}:#{@port}#{@path.suggest(@uuid)}"
+    end
+
+    def make_request(path)
+      uri = build_uri(path)
+      puts "Contacting "+uri
+      client = EventMachine::HttpRequest.new(uri)
       future = Future.new
 
-      http = client.get(:head  => {'Accept' => 'application/json'})
+      http = yield(client)
       http.errback { future.deliver("badness") }
       http.callback { future.deliver(Response.parse(http.response)) }
 
       future
+    end
+
+    def suggest()
+      make_request(@path.suggest(@uuid)) do |client|
+        client.get(:head => {'Accept' => 'application/json'})
+      end
+    end
+
+    def reward(token, amount = 1.0)
+      make_request(@path.reward(@uuid)) do |client|
+        client.post(:head => {'Accept' => 'application/json'},
+                    :body => {:token => token, :amount => amount})
+      end
     end
   end
 
