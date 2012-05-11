@@ -85,6 +85,11 @@ puts("Choice is #{suggestion.choice}")
 expt.reward(suggestion.token, 1.0)
 ```
 
+### Authorized Commands
+
+Documentation needs to be written
+
+
 ## Development Notes
 
 The easiest way to install the dependencies is to install [Bundler](http://gembundler.com/) and then run `bundle install`
