@@ -33,7 +33,7 @@ describe Future do
         v + 3
       end
 
-      f1.deliver(1)
+      f1.succeed(1)
       f2.get.must_equal 4
     end
 
@@ -45,10 +45,18 @@ describe Future do
 
       Thread.new do
         sleep(1)
-        f1.deliver(1)
+        f1.succeed(1)
       end
 
       f2.get.must_equal 4
+    end
+  end
+
+  describe "Future.fail" do
+    it "must cause an exception to be raised on get" do
+      # Not implemented
+      # Also test Future.run and future.run
+      true.must_equal false
     end
   end
 end

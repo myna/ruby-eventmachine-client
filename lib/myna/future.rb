@@ -26,45 +26,83 @@ require 'thread'
 
 
 module Future
+
+  def Future.run
+    future = Future.new
+    future.run(yield)
+    future
+  end
+
   class Future
     def initialize()
       @lock = Mutex.new
       @signal = ConditionVariable.new
       @value = nil
-      @delivered = false
+      @result = false # false, :success, or :failure
       @listeners = []
     end
 
-    def deliver(value)
+    def set(value, result)
       @lock.synchronize {
-        if @delivered
-          raise ArgumentError, "This future has already been delivered a value"
+        if @result
+          raise ArgumentError, "This future has already been completed with a value"
         else
           @value = value
-          @delivered = true
+          @result = result
           @signal.broadcast
         end
       }
-      @listeners.each do |block|
-        block.call(value)
+
+      if result == :success
+        @listeners.each do |block|
+          block.call(value)
+        end
+      end
+    end
+
+    def succeed(value)
+      self.set(value, :success)
+    end
+
+    def fail(value)
+      self.set(value, :failure)
+    end
+
+    def run
+      begin
+        self.succeed(yield)
+      rescue => exn
+        self.fail(exn)
       end
     end
 
     def get
+      def handle_value
+        case @result
+        when :success
+          @value
+        when :failure
+          raise @value
+        else
+          raise ArgumentError, "Attempted to handle_value when result #{@result} is not :success or :failure"
+        end
+      end
+
       @lock.synchronize {
-        if !@delivered
+        if @result
+          handle_value
+        else
           @signal.wait(@lock)
           @signal.broadcast
+          handle_value
         end
-
-        @value
       }
     end
 
     def on_complete(&block)
       return_value = false
       @lock.synchronize {
-        if @delivered
+        if @result == :success
           return_value = true
         else
           @listeners.push(block)
@@ -82,7 +120,9 @@ module Future
     def map(&block)
       future = Future.new
       self.on_complete do |value|
-        future.deliver(block.call(value))
+        future.run do
+          block.call(value)
+        end
       end
       future
     end

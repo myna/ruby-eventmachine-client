@@ -35,14 +35,14 @@ module Myna
     future = Future::Future.new
 
     if EventMachine::reactor_running?
-      future.deliver(true)
+      future.succeed(true)
     else
       Thread.new do
         EventMachine::run {}
       end
 
       EventMachine::next_tick do
-        future.deliver(true)
+        future.succeed(true)
       end
     end
 
@@ -78,8 +78,8 @@ module Myna
         client = EventMachine::HttpRequest.new(uri)
 
         http = yield(client)
-        http.errback  { future.deliver(Response::NetworkError.new) }
-        http.callback { future.deliver(Response.parse(http.response)) }
+        http.errback  { future.succeed(Response::NetworkError.new) }
+        http.callback { future.succeed(Response.parse(http.response)) }
       end
 
       future
