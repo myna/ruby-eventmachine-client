@@ -23,7 +23,7 @@
 #
 
 require 'minitest/autorun'
-require 'response'
+require 'myna/response'
 
 describe Response do
 

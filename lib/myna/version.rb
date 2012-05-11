@@ -22,33 +22,6 @@
 # THE SOFTWARE.
 #
 
-require 'minitest/autorun'
-require 'myna/future'
-
-describe Future do
-  describe "Future.map" do
-    it "must run the given block and complete the returned future" do
-      f1 = Future::Future.new
-      f2 = f1.map do |v|
-        v + 3
-      end
-
-      f1.deliver(1)
-      f2.get.must_equal 4
-    end
-
-    it "must run the given block and complete the returned future from another thread" do
-      f1 = Future::Future.new
-      f2 = f1.map do |v|
-        v + 3
-      end
-
-      Thread.new do
-        sleep(1)
-        f1.deliver(1)
-      end
-
-      f2.get.must_equal 4
-    end
-  end
+module Myna
+  VERSION = "1.0.0"
 end
