@@ -27,7 +27,13 @@ module Response
   class Response
   end
 
-  class ApiError < Response
+  class MynaError < Response
+  end
+
+  class NetworkError < MynaError
+  end
+
+  class ApiError < MynaError
     def self.from_json(json)
       error = ApiError.new(json['subtype'], json['messages'])
     end
