@@ -27,9 +27,9 @@ require 'thread'
 
 module Future
 
-  def Future.run
+  def Future.run(&block)
     future = Future.new
-    future.run(yield)
+    future.run(block)
     future
   end
 
@@ -68,9 +68,10 @@ module Future
       self.set(value, :failure)
     end
 
-    def run
+    def run(proc)
       begin
-        self.succeed(yield)
+        value = proc.call()
+        self.succeed(value)
       rescue => exn
         self.fail(exn)
       end
@@ -120,9 +121,7 @@ module Future
     def map(&block)
       future = Future.new
       self.on_complete do |value|
-        future.run do
-          block.call(value)
-        end
+        future.run(proc { block.call(value) })
       end
       future
     end
