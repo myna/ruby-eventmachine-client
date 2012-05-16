@@ -46,5 +46,4 @@ Rake commands:
 
 ## TODO
 
-- Futures need to handle failures, and need to rigourously trap exceptions and propagate them.
 - Some RDoc or equivalent might be useful
