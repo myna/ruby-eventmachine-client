@@ -118,6 +118,10 @@ module Myna
     end
   end
 
+  def Myna.experiment(uuid)
+    Myna::Experiment.new(uuid)
+  end
+
   # The simple API for unauthorized access
   class Experiment
     def initialize(uuid, host = UnauthorizedHost)
@@ -143,11 +147,11 @@ module Myna
   end
 
   def Myna.authorize(email, password, host = AuthorizedHost)
-    ExperimentFactory.new(email, password, host)
+    AuthorizedMyna.new(email, password, host)
   end
 
   # The more complex API for authorized access
-  class ExperimentFactory
+  class AuthorizedMyna
     def initialize(email, password, host = AuthorizedHost)
       @email    = email
       @password = password

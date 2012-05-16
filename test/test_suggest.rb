@@ -36,13 +36,13 @@ describe Myna do
 
   describe "suggest" do
     it "must return a suggestion for a valid experiment" do
-      expt = Myna::Experiment.new('45923780-80ed-47c6-aa46-15e2ae7a0e8c')
+      expt = Myna.experiment('45923780-80ed-47c6-aa46-15e2ae7a0e8c')
       ans = expt.suggest
       ans.get.must_be_kind_of Response::Suggestion
     end
 
     it "must return an error for an invalid experiment" do
-      expt = Myna::Experiment.new('bogus')
+      expt = Myna.experiment('bogus')
       ans = expt.suggest
       ans.get.must_be_kind_of Response::ApiError
     end
@@ -50,7 +50,7 @@ describe Myna do
 
   describe "reward" do
     it "must succeed when given correct token and amount" do
-      expt = Myna::Experiment.new('45923780-80ed-47c6-aa46-15e2ae7a0e8c')
+      expt = Myna.experiment('45923780-80ed-47c6-aa46-15e2ae7a0e8c')
       suggestion = expt.suggest.get
 
       ans = expt.reward(suggestion.token, 0.5)
