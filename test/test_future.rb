@@ -54,9 +54,23 @@ describe Future do
 
   describe "Future.fail" do
     it "must cause an exception to be raised on get" do
-      # Not implemented
-      # Also test Future.run and future.run
-      true.must_equal false
+      exn = Exception.new("A test")
+      f = Future::Future.new
+      f.fail(exn)
+
+      proc { f.get }.must_raise Exception
+    end
+  end
+
+  describe "Future.run" do
+    it "must complete the future with the expected value" do
+      f = Future.run do 1 + 1 end
+      f.get.must_equal 2
+    end
+
+    it "must catch exceptions and complete the future in a failed state" do
+      f = Future.run do 1/0 end
+      proc { f.get }.must_raise ZeroDivisionError
     end
   end
 end
