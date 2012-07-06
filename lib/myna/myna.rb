@@ -168,7 +168,7 @@ module Myna
         end
 
       future.map do |response|
-        if response.kind_of? Response::Uuid
+        if response.kind_of? Response::Experiment
           AuthorizedExperiment.new(response.uuid, @email, @password, @host)
         else
           response
