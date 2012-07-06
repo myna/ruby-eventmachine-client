@@ -45,6 +45,31 @@ describe Myna do
     end
   end
 
+  describe "reset" do
+    it "must reset variants to zero" do
+      myna = Myna.authorize("test@example.com", "themostsecretpassword")
+
+      expt = myna.create("reseto").get
+      expt.must_be_kind_of Myna::AuthorizedExperiment
+
+      expt.create_variant("Best variant evar").get.must_be_kind_of Response::Ok
+      suggestion = expt.suggest().get
+      expt.reward(suggestion.token, 1.0)
+
+      info = expt.info().get
+      info.variants[0].totalReward.must_equal 1.0
+      info.variants[0].views.must_equal 1
+
+      expt.reset().get.must_be_kind_of Response::Ok
+
+      info = expt.info().get
+      info.variants[0].totalReward.must_equal 0
+      info.variants[0].views.must_equal 0
+
+      expt.delete().get
+    end
+  end
+
   describe "create_variant and delete_variant" do
     it "must create and delete variants" do
       myna = Myna.authorize("test@example.com", "themostsecretpassword")
@@ -68,8 +93,12 @@ describe Myna do
       info.name.must_equal "test"
       info.uuid.must_equal '45923780-80ed-47c6-aa46-15e2ae7a0e8c'
       info.variants.length.must_equal 2
-      info.variants[0].name.must_equal 'variant1'
-      info.variants[1].name.must_equal 'variant2'
+      if info.variants[0].name == 'variant1'
+        info.variants[1].name.must_equal 'variant2'
+      else
+        info.variants[0].name.must_equal 'variant2'
+        info.variants[1].name.must_equal 'variant1'
+      end
     end
   end
 end

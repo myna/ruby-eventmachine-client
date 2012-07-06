@@ -98,6 +98,10 @@ module Myna
       build_uri("/v1/experiment/#{uuid}/reward")
     end
 
+    def reset(uuid)
+      build_uri("/v1/experiment/#{uuid}/reset")
+    end
+
     def delete(uuid)
       build_uri("/v1/experiment/#{uuid}/delete")
     end
@@ -186,6 +190,15 @@ module Myna
       super(uuid, host)
       @email    = email
       @password = password
+    end
+
+    def reset
+      @api.make_request(@api.reset(@uuid)) do |client|
+        client.get(:head => {
+                     'Accept' => 'application/json',
+                     'Authorization' => [@email, @password]
+                   })
+      end
     end
 
     def delete
