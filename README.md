@@ -41,7 +41,7 @@ Rake commands:
 - `test` to run the tests.
 - `build` to build a Gem
 - `install` to install the Gem locally
-- `release` to push the Gem to RubyGems
+- `release` to push the Gem to RubyGems. The version number comes from `lib/myna/version.rb`
 
 
 ## TODO
