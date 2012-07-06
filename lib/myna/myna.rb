@@ -71,12 +71,18 @@ module Myna
 #      puts "Contacting "+uri
       future = Future::Future.new
 
-      EventMachine::schedule do
+      EventMachine.run do
         client = EventMachine::HttpRequest.new(uri)
 
         http = yield(client)
-        http.errback  { future.succeed(Response::NetworkError.new) }
-        http.callback { future.succeed(Response.parse(http.response)) }
+         http.errback  {
+          future.succeed(Response::NetworkError.new)
+          EM.stop
+        }
+        http.callback {
+          future.succeed(Response.parse(http.response))
+          EM.stop
+        }
       end
 
       future
