@@ -120,19 +120,21 @@ module Response
 
   class Variant < Response
     def self.from_json(json)
-      variant = Variant.new(json['name'], json['views'], json['totalReward'], json['confidenceBound'])
+      variant = Variant.new(json['name'], json['views'], json['totalReward'], json['lowerConfidenceBound'], json['upperConfidenceBound'])
     end
 
     attr_reader :name
     attr_reader :views
     attr_reader :totalReward
-    attr_reader :confidenceBound
+    attr_reader :lowerConfidenceBound
+    attr_reader :upperConfidenceBound
 
-    def initialize(name, views, totalReward, confidenceBound)
+    def initialize(name, views, totalReward, lowerConfidenceBound, upperConfidenceBound)
       @name = name
       @views = views
       @totalReward = totalReward
-      @confidenceBound = confidenceBound
+      @lowerConfidenceBound = lowerConfidenceBound
+      @upperConfidenceBound = upperConfidenceBound
     end
   end
 end

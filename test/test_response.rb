@@ -68,12 +68,14 @@ describe Response do
                   "name":"variant1",
                   "views":36,
                   "totalReward":1.0,
-                  "confidenceBound":0.252904521564191},
+                  "lowerConfidenceBound":0.252904521564191,
+                  "upperConfidenceBound":0.452904521564191},
                  {"typename":"variant",
                   "name":"variant2",
                   "views":9672,
                   "totalReward":0.0,
-                  "confidenceBound":0.015429423531830728}]}'
+                  "lowerConfidenceBound":0.015429423531830728,
+                  "upperConfidenceBound":0.03429423531830728}]}'
       ans = Response.parse(txt)
 
       ans.must_be_kind_of Response::Experiment
@@ -87,12 +89,14 @@ describe Response do
       v0.name.must_equal "variant1"
       v0.views.must_equal 36
       v0.totalReward.must_equal 1.0
-      v0.confidenceBound.must_equal 0.252904521564191
+      v0.lowerConfidenceBound.must_equal 0.252904521564191
+      v0.upperConfidenceBound.must_equal 0.452904521564191
 
       v1.name.must_equal "variant2"
       v1.views.must_equal 9672
       v1.totalReward.must_equal 0.0
-      v1.confidenceBound.must_equal 0.015429423531830728
+      v1.lowerConfidenceBound.must_equal 0.015429423531830728
+      v1.upperConfidenceBound.must_equal 0.03429423531830728
     end
   end
 end

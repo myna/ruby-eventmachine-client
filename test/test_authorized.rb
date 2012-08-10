@@ -93,12 +93,30 @@ describe Myna do
       info.name.must_equal "test"
       info.uuid.must_equal '45923780-80ed-47c6-aa46-15e2ae7a0e8c'
       info.variants.length.must_equal 2
+
+      v1 = nil
+      v2 = nil
       if info.variants[0].name == 'variant1'
         info.variants[1].name.must_equal 'variant2'
+        v1 = info.variants[0]
+        v2 = info.variants[1]
       else
         info.variants[0].name.must_equal 'variant2'
         info.variants[1].name.must_equal 'variant1'
+        v1 = info.variants[1]
+        v2 = info.variants[0]
       end
+
+      # Check attributes are all present
+      def check_attributes(variant)
+        variant.views.must_be_kind_of Fixnum
+        variant.totalReward.must_be_kind_of Float
+        variant.upperConfidenceBound.must_be_kind_of Float
+        variant.lowerConfidenceBound.must_be_kind_of Float
+      end
+
+      check_attributes(v1)
+      check_attributes(v2)
     end
   end
 end
