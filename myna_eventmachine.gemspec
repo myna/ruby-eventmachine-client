@@ -17,4 +17,9 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
+
+  # Dependencies
+  s.add_runtime_dependency 'em-http-request'
+  s.add_runtime_dependency 'eventmachine'
+  s.add_runtime_dependency 'json'
 end
