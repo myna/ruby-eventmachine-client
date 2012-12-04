@@ -11,13 +11,14 @@ This is a Ruby client for the v1 [Myna](http://mynaweb.com) API, using EventMach
 You can get a suggestion from Myna without authorizing:
 
 ```ruby
+Myna.run.get # Start EventMachine if it isn't already running
 expt = Myna.experiment('45923780-80ed-47c6-aa46-15e2ae7a0e8c')
 suggestion = expt.suggest.get
 # suggestion has two attributes: choice and token
 # suggestion.choice is a string, the choice made by Myna
 # suggestion.token is a string, the token you send back to Myna when you reward
 puts("Choice is #{suggestion.choice}")
-expt.reward(suggestion.token, 1.0)
+expt.reward(suggestion.token, 1.0).get
 ```
 
 To create an experiment, add and delete variants, and so on, you must authorize first:
